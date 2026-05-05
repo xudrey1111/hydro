@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { LoginForm } from "@/components/login-form"
 
 export default function HomePage() {
@@ -20,8 +21,17 @@ export default function HomePage() {
         ))}
       </div>
 
-      <div className="relative z-10 w-full max-w-md px-6">
+      <div className="relative z-10 w-full max-w-md px-6 space-y-4">
         <LoginForm />
+        <p className="text-center text-sm text-muted-foreground">
+          ¿Quieres saber más sobre nosotros?{" "}
+          <Link
+            href="/conocenos"
+            className="text-cyan-500 hover:text-cyan-400 font-medium transition-colors underline underline-offset-2"
+          >
+            Conócenos
+          </Link>
+        </p>
       </div>
     </div>
   )
