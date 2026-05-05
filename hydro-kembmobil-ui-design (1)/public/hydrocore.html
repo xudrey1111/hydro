@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HYDROCORE - Control de Cultivos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      color: #333;
+    }
+
+    /* ========== SPLASH SCREEN ========== */
+    .splash-screen {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f4c5c 0%, #1a3a4a 50%, #0d3d4d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .splash-screen::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="10" cy="20" r="3" fill="rgba(255,255,255,0.15)"/><circle cx="30" cy="60" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="30" r="4" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="70" r="3" fill="rgba(255,255,255,0.12)"/><circle cx="90" cy="40" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="80" r="3" fill="rgba(255,255,255,0.08)"/><circle cx="60" cy="10" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="90" r="4" fill="rgba(255,255,255,0.07)"/><circle cx="40" cy="50" r="2" fill="rgba(255,255,255,0.09)"/></svg>');
+      background-size: 150px 150px;
+      animation: bubbleFloat 25s linear infinite;
+    }
+
+    @keyframes bubbleFloat {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-150px); }
+    }
+
+    .splash-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .splash-leaf {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+    }
+
+    .splash-leaf svg {
+      width: 100%;
+      height: 100%;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .splash-title {
+      font-size: 38px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .splash-subtitle {
+      font-size: 18px;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 48px;
+    }
+
+    .splash-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .splash-btn {
+      padding: 18px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .splash-btn-primary {
+      background: rgba(255,255,255,0.25);
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+
+    .splash-btn-primary:hover {
+      background: rgba(255,255,255,0.35);
+      transform: translateY(-2px);
+    }
+
+    .splash-btn-secondary {
+      background: transparent;
+      color: rgba(255,255,255,0.9);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .splash-btn-secondary:hover {
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ========== LOGIN PAGE ========== */
+    .login-container {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #e8eef2;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 24px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 16px;
+    }
+
+    .login-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: #1a3a4a;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .login-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a3a4a;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 15px;
+      color: #666;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #888;
+    }
+
+    .input-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 16px 16px 16px 50px;
+      border: 1px solid #e0e5e9;
+      border-radius: 12px;
+      font-size: 15px;
+      background: #f8fafb;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #3b82a0;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(59, 130, 160, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #999;
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .remember-me input {
+      width: 16px;
+      height: 16px;
+      accent-color: #1a3a4a;
+    }
+
+    .forgot-password {
+      color: #1a3a4a;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 16px;
+      background: #1a3a4a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-login:hover {
+      background: #0f2a36;
+      transform: translateY(-1px);
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .register-link a {
+      color: #1a3a4a;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* ========== REGISTER PAGE ========== */
+    .register-container {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: #e8eef2;
+    }
+
+    /* ========== DASHBOARD ========== */
+    .dashboard {
+      display: none;
+      min-height: 100vh;
+      background: #f5f7fa;
+    }
+
+    .header {
+      background: white;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
+    .header-title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #e8f5e9;
+      border-radius: 20px;
+      color: #2e7d32;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #4caf50;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: #f5f5f5;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .icon-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 18px;
+      height: 18px;
+      background: #f44336;
+      color: white;
+      border-radius: 50%;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    /* Navigation */
+    .nav-container {
+      background: white;
+      padding: 0 32px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-tab {
+      padding: 16px 24px;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-tab:hover {
+      color: #3b82a0;
+    }
+
+    .nav-tab.active {
+      color: #3b82a0;
+      border-bottom-color: #3b82a0;
+    }
+
+    .nav-tab svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a3a4a;
+      margin-bottom: 24px;
+    }
+
+    /* Panel - Crop Selection */
+    .crop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .crop-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 3px solid transparent;
+    }
+
+    .crop-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+
+    .crop-card.selected {
+      border-color: #3b82a0;
+      background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+    }
+
+    .crop-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .crop-name {
+      font-weight: 600;
+      color: #333;
+      font-size: 16px;
+    }
+
+    /* Conocenos Section */
+    .conocenos-card {
+      background: linear-gradient(135deg, #1a3a4a 0%, #2d5a6e 100%);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 32px;
+      color: white;
+    }
+
+    .conocenos-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .conocenos-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .conocenos-text {
+      font-size: 16px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.9);
+      max-width: 700px;
+    }
+
+    .conocenos-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 28px;
+    }
+
+    .conocenos-stat {
+      text-align: center;
+    }
+
+    .conocenos-stat-value {
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .conocenos-stat-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Sensors Grid */
+    .sensors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .sensor-card {
+      background: white;
+      border-radius: 20px;
+      padding: 28px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #f0f2f4;
+    }
+
+    .sensor-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .sensor-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+    }
+
+    .sensor-card.humidity::before { background: #2196f3; }
+    .sensor-card.light::before { background: #ff9800; }
+    .sensor-card.temp::before { background: #f44336; }
+    .sensor-card.ph::before { background: #9c27b0; }
+    .sensor-card.water-level::before { background: #00bcd4; }
+    .sensor-card.purity::before { background: #4caf50; }
+
+    .sensor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .sensor-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+    }
+
+    .sensor-card.humidity .sensor-icon { background: #e3f2fd; }
+    .sensor-card.light .sensor-icon { background: #fff3e0; }
+    .sensor-card.temp .sensor-icon { background: #ffebee; }
+    .sensor-card.ph .sensor-icon { background: #f3e5f5; }
+    .sensor-card.water-level .sensor-icon { background: #e0f7fa; }
+    .sensor-card.purity .sensor-icon { background: #e8f5e9; }
+
+    .sensor-status {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .sensor-status.optimal {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .sensor-status.warning {
+      background: #fff3e0;
+      color: #ef6c00;
+    }
+
+    .sensor-name {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .sensor-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #1a3a4a;
+    }
+
+    .sensor-unit {
+      font-size: 18px;
+      font-weight: 500;
+      color: #888;
+    }
+
+    .sensor-time {
+      font-size: 12px;
+      color: #999;
+      margin-top: 12px;
+    }
+
+    /* Analysis Section */
+    .time-filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .time-filter {
+      padding: 10px 20px;
+      border: 2px solid #c5dbe6;
+      background: white;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #3b82a0;
+    }
+
+    .time-filter:hover {
+      background: #e3f2fd;
+    }
+
+    .time-filter.active {
+      background: #3b82a0;
+      border-color: #3b82a0;
+      color: white;
+    }
+
+    .chart-container {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a3a4a;
+    }
+
+    /* Control Section */
+    .manual-section {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .manual-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #1a3a4a;
+    }
+
+    .accordion-item {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .accordion-header {
+      padding: 16px 20px;
+      background: #fafafa;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 500;
+    }
+
+    .accordion-header:hover {
+      background: #f0f0f0;
+    }
+
+    .accordion-content {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .accordion-item.open .accordion-content {
+      padding: 16px 20px;
+      max-height: 500px;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .tip-card {
+      background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid #3b82a0;
+    }
+
+    .tip-title {
+      font-weight: 600;
+      color: #1a3a4a;
+      margin-bottom: 8px;
+    }
+
+    .tip-text {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* Chat Section - New Style */
+    .chat-container {
+      background: white;
+      border-radius: 20px;
+      height: 550px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .chat-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .chat-header-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a3a4a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-header-title svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .chat-header-subtitle {
+      font-size: 14px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: white;
+    }
+
+    .message-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #1a3a4a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .message-avatar svg {
+      width: 20px;
+      height: 20px;
+      stroke: white;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .message.bot {
+      background: #f5f7fa;
+      color: #333;
+      border-radius: 4px 16px 16px 16px;
+    }
+
+    .message.user {
+      background: #1a3a4a;
+      color: white;
+      margin-left: auto;
+      border-radius: 16px 16px 4px 16px;
+    }
+
+    .chat-bottom {
+      border-top: 1px solid #eee;
+      background: white;
+    }
+
+    .chat-input-container {
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1px solid #e0e5e9;
+      border-radius: 24px;
+      font-size: 14px;
+      outline: none;
+      background: #f8fafb;
+    }
+
+    .chat-input:focus {
+      border-color: #3b82a0;
+      background: white;
+    }
+
+    .chat-send {
+      padding: 14px 24px;
+      background: #1a3a4a;
+      color: white;
+      border: none;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chat-send:hover {
+      background: #0f2a36;
+    }
+
+    .chat-quick-options {
+      padding: 0 20px 16px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chat-quick-btn {
+      padding: 10px 18px;
+      border: 1px solid #e0e5e9;
+      background: white;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #555;
+    }
+
+    .chat-quick-btn:hover {
+      border-color: #3b82a0;
+      color: #3b82a0;
+    }
+
+    .chat-quick-btn.highlight {
+      background: #1a3a4a;
+      border-color: #1a3a4a;
+      color: white;
+    }
+
+    .chat-quick-btn.highlight:hover {
+      background: #0f2a36;
+    }
+
+    /* Sensor Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a3a4a;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: #f5f5f5;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .modal-body {
+      padding: 0 24px 24px;
+    }
+
+    .modal-value-container {
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-value {
+      font-size: 72px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .modal-value-label {
+      font-size: 16px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 8px;
+    }
+
+    .modal-chart {
+      height: 200px;
+      background: #f5f7fa;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+    }
+
+    /* Notifications Dropdown */
+    .notifications-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      width: 320px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      display: none;
+      z-index: 200;
+      margin-top: 8px;
+    }
+
+    .notifications-dropdown.active {
+      display: block;
+    }
+
+    .notifications-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+      color: #1a3a4a;
+    }
+
+    .notification-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      gap: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .notification-item:hover {
+      background: #f9fafb;
+    }
+
+    .notification-item:last-child {
+      border-bottom: none;
+    }
+
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .notification-icon.warning {
+      background: #fff3e0;
+      color: #ef6c00;
+    }
+
+    .notification-icon.info {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .notification-icon.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-text {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        padding: 12px 16px;
+      }
+
+      .nav-container {
+        padding: 0 16px;
+        overflow-x: auto;
+      }
+
+      .nav-tabs {
+        width: max-content;
+      }
+
+      .nav-tab {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+
+      .main-content {
+        padding: 16px;
+      }
+
+      .sensors-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .conocenos-stats {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .splash-title {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- SPLASH SCREEN -->
+  <div class="splash-screen" id="splashScreen">
+    <div class="splash-content">
+      <div class="splash-leaf">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.5 0 1-.05 1.5-.1-4-1-7-4.5-7.5-8.9 2 3 5.5 5 9.5 5 2.5 0 4.8-.9 6.5-2.5C22 14.5 22 13.3 22 12c0-5.5-4.5-10-10-10z"/>
+          <path d="M15 8c-2 0-4 1-5 3 1-1 3-1.5 5-1.5 1.5 0 3 .3 4 1-.5-1.5-2-2.5-4-2.5z"/>
+        </svg>
+      </div>
+      <h1 class="splash-title">Donde el agua<br>es la raiz de todo</h1>
+      <p class="splash-subtitle">Control total sobre tu cultivo</p>
+      <div class="splash-buttons">
+        <button class="splash-btn splash-btn-primary" onclick="showLogin()">Iniciar Sesion</button>
+        <button class="splash-btn splash-btn-secondary" onclick="showRegister()">Crear una cuenta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN PAGE -->
+  <div class="login-container" id="loginPage">
+    <div class="login-card">
+      <button class="back-btn" onclick="showSplash()">&larr;</button>
+      <div class="login-header">
+        <div class="login-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.5 0 1-.05 1.5-.1-4-1-7-4.5-7.5-8.9 2 3 5.5 5 9.5 5 2.5 0 4.8-.9 6.5-2.5C22 14.5 22 13.3 22 12c0-5.5-4.5-10-10-10z"/>
+          </svg>
+        </div>
+        <h1 class="login-title">Bienvenido</h1>
+        <p class="login-subtitle">Inicia sesion en tu cuenta</p>
+      </div>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <div class="input-with-icon">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 6-10 7L2 6"/>
+              </svg>
+            </span>
+            <input type="text" class="form-input" id="username" placeholder="usuario@correo.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <input type="password" class="form-input" id="password" placeholder="********" required>
+          </div>
+        </div>
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox"> Recordarme
+          </label>
+          <a href="#" class="forgot-password">Olvidaste tu contrasena?</a>
+        </div>
+        <button type="submit" class="btn-login">Iniciar Sesion</button>
+      </form>
+      <div class="register-link">
+        No tienes cuenta? <a href="#" onclick="showRegister(); return false;">Registrate</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTER PAGE -->
+  <div class="register-container" id="registerPage">
+    <div class="login-card">
+      <button class="back-btn" onclick="showSplash()">&larr;</button>
+      <div class="login-header">
+        <div class="login-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.5 0 1-.05 1.5-.1-4-1-7-4.5-7.5-8.9 2 3 5.5 5 9.5 5 2.5 0 4.8-.9 6.5-2.5C22 14.5 22 13.3 22 12c0-5.5-4.5-10-10-10z"/>
+          </svg>
+        </div>
+        <h1 class="login-title">Crear cuenta</h1>
+        <p class="login-subtitle">Registrate para comenzar</p>
+      </div>
+      
+      <form id="registerForm">
+        <div class="form-group">
+          <div class="input-with-icon">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+            <input type="text" class="form-input" id="regUsername" placeholder="Nombre de usuario" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <path d="m22 6-10 7L2 6"/>
+              </svg>
+            </span>
+            <input type="email" class="form-input" id="regEmail" placeholder="correo@ejemplo.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </span>
+            <input type="password" class="form-input" id="regPassword" placeholder="Contrasena" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-login">Crear cuenta</button>
+      </form>
+      <div class="register-link">
+        Ya tienes cuenta? <a href="#" onclick="showLogin(); return false;">Inicia sesion</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <img src="/images/hydrocore-logo.png" alt="Logo" class="header-logo">
+        <div class="header-title">
+          <span style="color: #1a3a4a;">HYDRO</span><span style="color: #3b82a0;">CORE</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          Sistema Activo
+        </div>
+        <div style="position: relative;">
+          <button class="icon-btn" onclick="toggleNotifications()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="notification-badge" id="notifCount">3</span>
+          </button>
+          <div class="notifications-dropdown" id="notificationsDropdown">
+            <div class="notifications-header">Notificaciones</div>
+            <div id="notificationsList">
+              <div class="notification-item">
+                <div class="notification-icon warning">!</div>
+                <div class="notification-content">
+                  <div class="notification-text">pH del agua fuera de rango: 6.7pH</div>
+                  <div class="notification-time">Hace 5 minutos</div>
+                </div>
+              </div>
+              <div class="notification-item">
+                <div class="notification-icon info">i</div>
+                <div class="notification-content">
+                  <div class="notification-text">Sugerencia: Revisa el nivel de nutrientes</div>
+                  <div class="notification-time">Hace 30 minutos</div>
+                </div>
+              </div>
+              <div class="notification-item">
+                <div class="notification-icon success">&#10003;</div>
+                <div class="notification-content">
+                  <div class="notification-text">Sistema calibrado correctamente</div>
+                  <div class="notification-time">Hace 1 hora</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="icon-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="logout()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showSection('panel')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Panel
+        </button>
+        <button class="nav-tab" onclick="showSection('sensors')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M2 12h20"></path>
+          </svg>
+          Sensores
+        </button>
+        <button class="nav-tab" onclick="showSection('analysis')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          Analisis
+        </button>
+        <button class="nav-tab" onclick="showSection('control')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+          Control
+        </button>
+        <button class="nav-tab" onclick="showSection('chat')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Chat
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Panel Section -->
+      <section class="section active" id="panelSection">
+        <h2 class="section-title">Selecciona tu tipo de cultivo</h2>
+        <div class="crop-grid">
+          <div class="crop-card" onclick="selectCrop(this, 'lechuga')">
+            <div class="crop-icon">&#127807;</div>
+            <div class="crop-name">Lechuga</div>
+          </div>
+          <div class="crop-card" onclick="selectCrop(this, 'tomate')">
+            <div class="crop-icon">&#127813;</div>
+            <div class="crop-name">Tomate</div>
+          </div>
+          <div class="crop-card" onclick="selectCrop(this, 'fresa')">
+            <div class="crop-icon">&#127827;</div>
+            <div class="crop-name">Fresa</div>
+          </div>
+          <div class="crop-card" onclick="selectCrop(this, 'albahaca')">
+            <div class="crop-icon">&#127793;</div>
+            <div class="crop-name">Albahaca</div>
+          </div>
+        </div>
+
+        <!-- Conocenos Section -->
+        <div class="conocenos-card">
+          <span class="conocenos-badge">INNOVATECNM 2023-2026</span>
+          <h3 class="conocenos-title">Conocenos</h3>
+          <p class="conocenos-text">
+            HYDROCORE es un proyecto que nacio en INNOVATECNM, el concurso de proyectos innovadores mas importante a nivel nacional del Tecnologico Nacional de Mexico. Durante 3 anos consecutivos hemos desarrollado y perfeccionado este sistema de monitoreo hidroponico, combinando tecnologia IoT con agricultura sustentable para optimizar el cultivo de plantas.
+          </p>
+          <div class="conocenos-stats">
+            <div class="conocenos-stat">
+              <div class="conocenos-stat-value">3</div>
+              <div class="conocenos-stat-label">Anos de desarrollo</div>
+            </div>
+            <div class="conocenos-stat">
+              <div class="conocenos-stat-value">6</div>
+              <div class="conocenos-stat-label">Sensores integrados</div>
+            </div>
+            <div class="conocenos-stat">
+              <div class="conocenos-stat-value">100+</div>
+              <div class="conocenos-stat-label">Usuarios activos</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sensors Section -->
+      <section class="section" id="sensorsSection">
+        <h2 class="section-title">Estado de Sensores</h2>
+        <div class="sensors-grid">
+          <div class="sensor-card humidity" onclick="openSensorModal('humidity', '#2196f3')">
+            <div class="sensor-header">
+              <div class="sensor-icon">&#128167;</div>
+              <span class="sensor-status optimal">Optimo</span>
+            </div>
+            <div class="sensor-name">Humedad</div>
+            <div class="sensor-value" id="humidityValue">77.1<span class="sensor-unit">%</span></div>
+            <div class="sensor-time">Actualizado: <span id="humidityTime"></span></div>
+          </div>
+          <div class="sensor-card light" onclick="openSensorModal('light', '#ff9800')">
+            <div class="sensor-header">
+              <div class="sensor-icon">&#9728;&#65039;</div>
+              <span class="sensor-status optimal">Optimo</span>
+            </div>
+            <div class="sensor-name">Luz</div>
+            <div class="sensor-value" id="lightValue">776.6<span class="sensor-unit">lux</span></div>
+            <div class="sensor-time">Actualizado: <span id="lightTime"></span></div>
+          </div>
+          <div class="sensor-card temp" onclick="openSensorModal('temp', '#f44336')">
+            <div class="sensor-header">
+              <div class="sensor-icon">&#127777;&#65039;</div>
+              <span class="sensor-status optimal">Optimo</span>
+            </div>
+            <div class="sensor-name">Temperatura</div>
+            <div class="sensor-value" id="tempValue">24.5<span class="sensor-unit">C</span></div>
+            <div class="sensor-time">Actualizado: <span id="tempTime"></span></div>
+          </div>
+          <div class="sensor-card ph" onclick="openSensorModal('ph', '#9c27b0')">
+            <div class="sensor-header">
+              <div class="sensor-icon">&#9879;&#65039;</div>
+              <span class="sensor-status warning">Advertencia</span>
+            </div>
+            <div class="sensor-name">pH del Agua</div>
+            <div class="sensor-value" id="phValue">6.7<span class="sensor-unit">pH</span></div>
+            <div class="sensor-time">Actualizado: <span id="phTime"></span></div>
+          </div>
+          <div class="sensor-card water-level" onclick="openSensorModal('water-level', '#00bcd4')">
+            <div class="sensor-header">
+              <div class="sensor-icon">&#128166;</div>
+              <span class="sensor-status optimal">Optimo</span>
+            </div>
+            <div class="sensor-name">Nivel de Agua</div>
+            <div class="sensor-value" id="waterValue">85<span class="sensor-unit">%</span></div>
+            <div class="sensor-time">Actualizado: <span id="waterTime"></span></div>
+          </div>
+          <div class="sensor-card purity" onclick="openSensorModal('purity', '#4caf50')">
+            <div class="sensor-header">
+              <div class="sensor-icon">&#10024;</div>
+              <span class="sensor-status optimal">Optimo</span>
+            </div>
+            <div class="sensor-name">Pureza del Agua</div>
+            <div class="sensor-value" id="purityValue">92<span class="sensor-unit">%</span></div>
+            <div class="sensor-time">Actualizado: <span id="purityTime"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analysis Section -->
+      <section class="section" id="analysisSection">
+        <h2 class="section-title">Analisis de Datos</h2>
+        <div class="time-filters">
+          <button class="time-filter active" onclick="setTimeFilter(this, '1d')">1 Dia</button>
+          <button class="time-filter" onclick="setTimeFilter(this, '7d')">7 Dias</button>
+          <button class="time-filter" onclick="setTimeFilter(this, '14d')">14 Dias</button>
+          <button class="time-filter" onclick="setTimeFilter(this, '1m')">1 Mes</button>
+        </div>
+        <div class="chart-container">
+          <p>Grafica de tendencias de sensores (Conectar con datos reales)</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Promedio pH</div>
+            <div class="stat-value">6.8</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Temp. Maxima</div>
+            <div class="stat-value">28.5C</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Humedad Min.</div>
+            <div class="stat-value">65%</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Control Section -->
+      <section class="section" id="controlSection">
+        <h2 class="section-title">Manual de Uso</h2>
+        <div class="manual-section">
+          <div class="accordion-item" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+              <span>Como iniciar el sistema</span>
+              <span>+</span>
+            </div>
+            <div class="accordion-content">
+              <p>1. Conecta los sensores a la red electrica.<br>
+              2. Asegurate de que todos los sensores esten sumergidos o posicionados correctamente.<br>
+              3. Inicia sesion en la aplicacion.<br>
+              4. Selecciona tu tipo de cultivo en el Panel.<br>
+              5. Monitorea los valores en tiempo real.</p>
+            </div>
+          </div>
+          <div class="accordion-item" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+              <span>Calibracion de sensores</span>
+              <span>+</span>
+            </div>
+            <div class="accordion-content">
+              <p>Para calibrar los sensores de pH, utiliza las soluciones buffer incluidas. Sumerge el sensor en la solucion pH 7 durante 2 minutos, luego en pH 4 durante otros 2 minutos.</p>
+            </div>
+          </div>
+          <div class="accordion-item" onclick="toggleAccordion(this)">
+            <div class="accordion-header">
+              <span>Solucion de problemas</span>
+              <span>+</span>
+            </div>
+            <div class="accordion-content">
+              <p>Si un sensor muestra valores erroneos, verifica la conexion y limpia el sensor con agua destilada. Si el problema persiste, contacta soporte tecnico.</p>
+            </div>
+          </div>
+        </div>
+        
+        <h3 class="section-title">Tips de Compras Anteriores</h3>
+        <div class="tips-grid">
+          <div class="tip-card">
+            <div class="tip-title">Solucion nutritiva A</div>
+            <div class="tip-text">Recomendada para lechugas. Reordenar cada 30 dias.</div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-title">Buffer pH 7.0</div>
+            <div class="tip-text">Usado para calibracion. Stock bajo, considera reordenar.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Chat Section -->
+      <section class="section" id="chatSection">
+        <div class="chat-container">
+          <div class="chat-header">
+            <div class="chat-header-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              Asistente HydroCORE
+            </div>
+            <div class="chat-header-subtitle">Preguntame sobre tu sistema hidroponico</div>
+          </div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="message-row">
+              <div class="message-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.5 0 1-.05 1.5-.1-4-1-7-4.5-7.5-8.9 2 3 5.5 5 9.5 5 2.5 0 4.8-.9 6.5-2.5C22 14.5 22 13.3 22 12c0-5.5-4.5-10-10-10z"/>
+                </svg>
+              </div>
+              <div class="message bot">Hola! Soy tu asistente para el sistema hidroponico. En que puedo ayudarte hoy?</div>
+            </div>
+          </div>
+          <div class="chat-bottom">
+            <div class="chat-input-container">
+              <input type="text" class="chat-input" id="chatInput" placeholder="Escribe tu pregunta aqui..." onkeypress="handleChatEnter(event)">
+              <button class="chat-send" onclick="sendMessage()">Enviar</button>
+            </div>
+            <div class="chat-quick-options">
+              <button class="chat-quick-btn" onclick="sendQuickOption('Como esta mi sistema?')">Como esta mi sistema?</button>
+              <button class="chat-quick-btn" onclick="sendQuickOption('Consejos de cultivo')">Consejos de cultivo</button>
+              <button class="chat-quick-btn highlight" onclick="sendQuickOption('Alertas recientes')">Alertas recientes</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Sensor Modal -->
+  <div class="modal-overlay" id="sensorModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Sensor</h3>
+        <button class="modal-close" onclick="closeSensorModal()">x</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-value-container" id="modalValueContainer">
+          <div class="modal-value" id="modalValue">--</div>
+          <div class="modal-value-label" id="modalLabel">Valor actual</div>
+        </div>
+        <div class="modal-chart">Historial del sensor (ultimas 24 horas)</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Users storage
+    const users = [
+      { username: 'admin', password: 'admin123' }
+    ];
+
+    // Screen navigation
+    function showSplash() {
+      document.getElementById('splashScreen').style.display = 'flex';
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('registerPage').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
+    }
+
+    function showLogin() {
+      document.getElementById('splashScreen').style.display = 'none';
+      document.getElementById('loginPage').style.display = 'flex';
+      document.getElementById('registerPage').style.display = 'none';
+    }
+
+    function showRegister() {
+      document.getElementById('splashScreen').style.display = 'none';
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('registerPage').style.display = 'flex';
+    }
+
+    // Login form
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      const user = users.find(u => u.username === username && u.password === password);
+      if (user) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        updateSensorValues();
+      } else {
+        alert('Usuario o contrasena incorrectos');
+      }
+    });
+
+    // Register form
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('regUsername').value;
+      const password = document.getElementById('regPassword').value;
+      
+      if (users.find(u => u.username === username)) {
+        alert('El usuario ya existe');
+        return;
+      }
+      
+      users.push({ username, password });
+      alert('Usuario registrado exitosamente! Ahora puedes iniciar sesion.');
+      showLogin();
+    });
+
+    function logout() {
+      document.getElementById('dashboard').style.display = 'none';
+      showSplash();
+    }
+
+    // Navigation
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      
+      document.getElementById(sectionId + 'Section').classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    // Crop selection
+    function selectCrop(card, cropType) {
+      document.querySelectorAll('.crop-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      alert('Cultivo seleccionado: ' + cropType + '. Parametros optimizados.');
+    }
+
+    // Sensor modal with color
+    function openSensorModal(sensorType, color) {
+      const modal = document.getElementById('sensorModal');
+      const titles = {
+        'humidity': 'Humedad',
+        'light': 'Luz',
+        'temp': 'Temperatura',
+        'ph': 'pH del Agua',
+        'water-level': 'Nivel de Agua',
+        'purity': 'Pureza del Agua'
+      };
+      const values = {
+        'humidity': document.getElementById('humidityValue').textContent,
+        'light': document.getElementById('lightValue').textContent,
+        'temp': document.getElementById('tempValue').textContent,
+        'ph': document.getElementById('phValue').textContent,
+        'water-level': document.getElementById('waterValue').textContent,
+        'purity': document.getElementById('purityValue').textContent
+      };
+      
+      document.getElementById('modalTitle').textContent = titles[sensorType];
+      document.getElementById('modalValue').textContent = values[sensorType];
+      document.getElementById('modalValueContainer').style.background = color;
+      modal.classList.add('active');
+    }
+
+    function closeSensorModal() {
+      document.getElementById('sensorModal').classList.remove('active');
+    }
+
+    // Time filter
+    function setTimeFilter(btn, period) {
+      document.querySelectorAll('.time-filter').forEach(f => f.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // Accordion
+    function toggleAccordion(item) {
+      item.classList.toggle('open');
+    }
+
+    // Notifications
+    function toggleNotifications() {
+      document.getElementById('notificationsDropdown').classList.toggle('active');
+    }
+
+    // Chat
+    function sendQuickOption(option) {
+      addUserMessage(option);
+      
+      setTimeout(() => {
+        let response = '';
+        if (option.includes('sistema')) {
+          response = 'Tu sistema esta funcionando correctamente. Todos los sensores estan activos. El pH esta ligeramente fuera del rango optimo (6.7), te recomiendo ajustarlo a 6.0-6.5 para mejor absorcion de nutrientes.';
+        } else if (option.includes('Consejos')) {
+          response = 'Para tu cultivo actual te recomiendo: 1) Mantener la temperatura entre 20-25C, 2) Asegurar 12-16 horas de luz diaria, 3) Revisar el pH cada 2 dias, 4) Cambiar la solucion nutritiva cada 2 semanas.';
+        } else if (option.includes('Alertas')) {
+          response = 'Tienes 3 alertas recientes: 1) pH fuera de rango (hace 5 min), 2) Sugerencia de revision de nutrientes (hace 30 min), 3) Calibracion completada (hace 1 hora). Revisa el icono de notificaciones para mas detalles.';
+        }
+        addBotMessage(response);
+      }, 600);
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (message) {
+        addUserMessage(message);
+        input.value = '';
+        
+        setTimeout(() => {
+          addBotMessage('Gracias por tu mensaje. Estoy procesando tu consulta. Si necesitas ayuda inmediata, puedes usar las opciones rapidas de abajo o contactar a soporte tecnico.');
+        }, 600);
+      }
+    }
+
+    function handleChatEnter(e) {
+      if (e.key === 'Enter') sendMessage();
+    }
+
+    function addUserMessage(text) {
+      const messagesDiv = document.getElementById('chatMessages');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'message user';
+      msgDiv.textContent = text;
+      messagesDiv.appendChild(msgDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function addBotMessage(text) {
+      const messagesDiv = document.getElementById('chatMessages');
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'message-row';
+      rowDiv.innerHTML = `
+        <div class="message-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.5 0 1-.05 1.5-.1-4-1-7-4.5-7.5-8.9 2 3 5.5 5 9.5 5 2.5 0 4.8-.9 6.5-2.5C22 14.5 22 13.3 22 12c0-5.5-4.5-10-10-10z"/>
+          </svg>
+        </div>
+        <div class="message bot">${text}</div>
+      `;
+      messagesDiv.appendChild(rowDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Update sensor values
+    function updateSensorValues() {
+      const now = new Date().toLocaleTimeString('es-MX');
+      
+      document.getElementById('humidityValue').innerHTML = (70 + Math.random() * 15).toFixed(1) + '<span class="sensor-unit">%</span>';
+      document.getElementById('lightValue').innerHTML = (700 + Math.random() * 200).toFixed(1) + '<span class="sensor-unit">lux</span>';
+      document.getElementById('tempValue').innerHTML = (22 + Math.random() * 6).toFixed(1) + '<span class="sensor-unit">C</span>';
+      document.getElementById('phValue').innerHTML = (6 + Math.random() * 1.5).toFixed(1) + '<span class="sensor-unit">pH</span>';
+      document.getElementById('waterValue').innerHTML = Math.floor(75 + Math.random() * 20) + '<span class="sensor-unit">%</span>';
+      document.getElementById('purityValue').innerHTML = Math.floor(85 + Math.random() * 15) + '<span class="sensor-unit">%</span>';
+      
+      document.querySelectorAll('.sensor-time span').forEach(span => span.textContent = now);
+      
+      setTimeout(updateSensorValues, 2000);
+    }
+
+    // Close modal on overlay click
+    document.getElementById('sensorModal').addEventListener('click', function(e) {
+      if (e.target === this) closeSensorModal();
+    });
+
+    // Close notifications when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.icon-btn') && !e.target.closest('.notifications-dropdown')) {
+        document.getElementById('notificationsDropdown').classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>
