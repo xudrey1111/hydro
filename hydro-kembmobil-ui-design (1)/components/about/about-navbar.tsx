@@ -5,7 +5,7 @@ export function AboutNavbar() {
   return (
     <header
       className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 md:px-16"
-      style={{ backgroundColor: "#f7faf8", borderBottom: "1px solid #c2d9cc" }}
+      style={{ backgroundColor: "#f0f4f2", borderBottom: "1px solid #c2d9cc" }}
     >
       <Link href="/" className="flex items-center gap-3">
         <Image
