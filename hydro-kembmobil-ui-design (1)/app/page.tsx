@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { LoginForm } from "@/components/login-form"
 
-// HydroCore Landing Page
+// HydroCore Landing Page - Updated with Golden Logo
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/20 via-background to-secondary/20 relative overflow-hidden">
