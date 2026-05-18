@@ -68,7 +68,7 @@ export function LoginForm() {
       <CardHeader className="space-y-4 pb-8 text-center">
         <div className="flex justify-center">
           <img 
-            src="/images/hydrocore-logo.png" 
+            src="/images/hydrocore-logo.png?v=cyan" 
             alt="HydroCore Logo" 
             className="h-32 w-32 object-contain"
           />
