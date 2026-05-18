@@ -9,11 +9,13 @@ export default function HomePage() {
       <header className="flex items-center justify-between px-8 py-4 md:px-16 border-b border-border bg-card/50 backdrop-blur-sm">
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/images/hydrocore-logo.png"
+            src="/images/hydrocore-logo.png?v=cyan"
             alt="HydroCore Logo"
             width={48}
             height={48}
             className="h-12 w-12"
+            priority
+            unoptimized
           />
           <span className="font-serif text-xl font-bold text-foreground tracking-tight hidden sm:inline">HYDRO</span>
           <span className="font-serif text-xl font-bold tracking-tight hidden sm:inline" style={{ color: "#1a6b3c" }}>
