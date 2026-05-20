@@ -264,15 +264,19 @@ export function SensorDashboard() {
               <Card
                 key={crop.id}
                 className={`cursor-pointer transition-all hover:shadow-lg ${
-                  isSelected ? "border-2 border-cyan-500 bg-cyan-500/5" : "hover:border-primary/50"
+                  isSelected ? "border-2 bg-opacity-5" : "hover:border-primary/50"
                 }`}
+                style={isSelected ? { borderColor: "#1a6b3c", backgroundColor: "rgba(26, 107, 60, 0.05)" } : {}}
                 onClick={() => handleSelectCrop(crop.id)}
               >
                 <CardContent className="p-4 text-center">
-                  <div className={`mx-auto rounded-full p-3 w-fit mb-3 ${isSelected ? "bg-cyan-500/20" : "bg-muted"}`}>
-                    <Icon className={`h-6 w-6 ${isSelected ? "text-cyan-500" : "text-muted-foreground"}`} />
+                  <div 
+                    className={`mx-auto rounded-full p-3 w-fit mb-3 ${isSelected ? "" : "bg-muted"}`}
+                    style={isSelected ? { backgroundColor: "rgba(26, 107, 60, 0.2)" } : {}}
+                  >
+                    <Icon className={`h-6 w-6 ${isSelected ? "" : "text-muted-foreground"}`} style={isSelected ? { color: "#1a6b3c" } : {}} />
                   </div>
-                  <p className={`font-medium ${isSelected ? "text-cyan-500" : ""}`}>{crop.name}</p>
+                  <p className={`font-medium`} style={isSelected ? { color: "#1a6b3c" } : {}}>{crop.name}</p>
                   <p className="text-xs text-muted-foreground mt-1">{crop.description}</p>
                 </CardContent>
               </Card>
@@ -282,16 +286,16 @@ export function SensorDashboard() {
       </div>
 
       {selectedCropData && (
-        <Card className="bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 border-cyan-500/30">
+        <Card className="border" style={{ backgroundColor: "rgba(26, 107, 60, 0.1)", borderColor: "rgba(26, 107, 60, 0.3)" }}>
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="rounded-full bg-cyan-500/20 p-4">
-                <Leaf className="h-8 w-8 text-cyan-500" />
+              <div className="rounded-full p-4" style={{ backgroundColor: "rgba(26, 107, 60, 0.2)" }}>
+                <Leaf className="h-8 w-8" style={{ color: "#1a6b3c" }} />
               </div>
               <div>
                 <h3 className="text-xl font-bold">Cultivo activo: {selectedCropData.name}</h3>
                 <p className="text-muted-foreground">{selectedCropData.description}</p>
-                <p className="text-sm text-cyan-600 mt-1">Los parametros del sistema estan optimizados para este cultivo.</p>
+                <p className="text-sm mt-1" style={{ color: "#1a6b3c" }}>Los parametros del sistema estan optimizados para este cultivo.</p>
               </div>
             </div>
           </CardContent>
@@ -361,7 +365,7 @@ export function SensorDashboard() {
             key={range.id}
             variant={analysisTimeRange === range.id ? "default" : "outline"}
             onClick={() => setAnalysisTimeRange(range.id)}
-            className={analysisTimeRange === range.id ? "bg-cyan-500 hover:bg-cyan-600" : ""}
+            style={analysisTimeRange === range.id ? { backgroundColor: "#1a6b3c" } : {}}
           >
             {range.label}
           </Button>
@@ -434,7 +438,7 @@ export function SensorDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-cyan-500" />
+            <BookOpen className="h-5 w-5" style={{ color: "#1a6b3c" }} />
             Manual de Uso
           </CardTitle>
           <CardDescription>Guias y tutoriales para el sistema</CardDescription>
@@ -462,7 +466,7 @@ export function SensorDashboard() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5 text-emerald-500" />
+            <ShoppingCart className="h-5 w-5" style={{ color: "#1a6b3c" }} />
             Tips de Compras Anteriores
           </CardTitle>
           <CardDescription>Consejos basados en tus compras</CardDescription>
@@ -492,7 +496,7 @@ export function SensorDashboard() {
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-cyan-500" />
+          <MessageSquare className="h-5 w-5" style={{ color: "#1a6b3c" }} />
           Centro de Ayuda
         </CardTitle>
         <CardDescription>Selecciona tu consulta para asistirte</CardDescription>
@@ -528,7 +532,7 @@ export function SensorDashboard() {
             <div className="space-y-3">
               {faqQuestions.map((faq, index) => (
                 <div key={index} className="p-4 border rounded-lg">
-                  <p className="font-medium text-cyan-600 mb-2">{faq.q}</p>
+                  <p className="font-medium mb-2" style={{ color: "#1a6b3c" }}>{faq.q}</p>
                   <p className="text-sm text-muted-foreground">{faq.a}</p>
                 </div>
               ))}
@@ -567,7 +571,7 @@ export function SensorDashboard() {
                   rows={4}
                 />
               </div>
-              <Button className="w-full bg-cyan-500 hover:bg-cyan-600" onClick={() => {
+              <Button className="w-full text-white" style={{ backgroundColor: "#1a6b3c" }} onClick={() => {
                 setChatMessage("")
                 setChatStep("menu")
                 setChatOption(null)
@@ -583,27 +587,27 @@ export function SensorDashboard() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      <header className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-40">
+    <div className="min-h-screen" style={{ backgroundColor: "#f0f4f2" }}>
+      <header className="border-b backdrop-blur-md sticky top-0 z-40" style={{ backgroundColor: "#1a6b3c" }}>
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img 
-              src="/images/hydrocore-logo.png" 
+              src="/images/hydrocore-logo.png?v=cyan" 
               alt="HydroCore Logo" 
               className="h-10 w-10 object-contain"
             />
             <h1 className="text-2xl font-bold">
-              <span className="text-gray-900">HYDRO</span>
-              <span className="text-cyan-500">CORE</span>
+              <span className="text-white">HYDRO</span>
+              <span style={{ color: "#39d353" }}>CORE</span>
             </h1>
           </div>
 
           <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20">
+            <Badge variant="secondary" className="text-white" style={{ backgroundColor: "#39d353" }}>
               Sistema Activo
             </Badge>
             <div className="relative">
-              <Button variant="ghost" size="icon" onClick={() => setShowNotifications(!showNotifications)}>
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" onClick={() => setShowNotifications(!showNotifications)}>
                 <Bell className="h-5 w-5" />
                 {notifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
@@ -640,17 +644,17 @@ export function SensorDashboard() {
                 </div>
               )}
             </div>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
               <Settings className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" onClick={handleLogout}>
               <LogOut className="h-5 w-5" />
             </Button>
           </div>
         </div>
       </header>
 
-      <div className="border-b bg-white/50 backdrop-blur-sm">
+      <div className="border-b" style={{ backgroundColor: "#f7faf8" }}>
         <div className="container mx-auto px-4">
           <div className="flex gap-1 overflow-x-auto">
             {navigationTabs.map((tab) => {
@@ -661,9 +665,10 @@ export function SensorDashboard() {
                   variant={activeTab === tab.id ? "secondary" : "ghost"}
                   className={`flex items-center gap-2 rounded-none border-b-2 ${
                     activeTab === tab.id
-                      ? "border-cyan-500 text-cyan-600 bg-cyan-500/5"
+                      ? "border-b-2 text-white"
                       : "border-transparent text-muted-foreground hover:text-foreground"
                   }`}
+                  style={activeTab === tab.id ? { borderColor: "#1a6b3c", backgroundColor: "#1a6b3c" } : {}}
                   onClick={() => setActiveTab(tab.id)}
                 >
                   <Icon className="h-4 w-4" />
